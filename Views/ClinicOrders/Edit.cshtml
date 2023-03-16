@@ -66,21 +66,21 @@
                     {
                         <tr>
                             <td>
-                                @Html.HiddenFor(modelItem => item.ClinicOrderID, new { id = "OrderDetails[" + row + "].ClinicOrderID", name = "OrderDetails[" + row + "].ClinicOrderID" })
-                                @Html.TextBoxFor(modelItem => item.ClinicOrderDetailID, new { id = "OrderDetails[" + row + "].ClinicOrderDetailID", name = "OrderDetails[" + row + "].ClinicOrderDetailID" })
-                                @Html.HiddenFor(modelItem => item.ProductID, new { id = "OrderDetails[" + row + "].ProductID", name = "OrderDetails[" + row + "].ProductID" })
+                                @Html.HiddenFor(modelItem => item.ClinicOrderID, new { id = "OrderDetails[" + row + "].ClinicOrderID"})
+                                @Html.TextBoxFor(modelItem => item.ClinicOrderDetailID, new { id = "OrderDetails[" + row + "].ClinicOrderDetailID" })
+                                @Html.HiddenFor(modelItem => item.ProductID, new { id = "OrderDetails[" + row + "].ProductID" })
                             </td>
                             <td>
-                                @Html.TextBoxFor(modelItem => item.Quantity, new { id = "OrderDetails[" + row + "].Quantity", name= "OrderDetails[" + row + "].Quantity" })
+                                @Html.TextBoxFor(modelItem => item.Quantity, new { id = "OrderDetails[" + row + "].Quantity" })
                             </td>
                             <td>
-                                @Html.TextBoxFor(modelItem => item.product.Name, new { id = "OrderDetails[" + row + "].Name", name = "OrderDetails[" + row + "].Name" })
+                                @Html.TextBoxFor(modelItem => item.product.Name, new { id = "OrderDetails[" + row + "].Name" })
                             </td>
                             <td>
-                                @Html.TextBoxFor(modelItem => item.product.Price, new { id = "OrderDetails[" + row + "].Price", name = "OrderDetails[" + row + "].Price" })
+                                @Html.TextBoxFor(modelItem => item.product.Price, new { id = "OrderDetails[" + row + "].Price" })
                             </td>
                             <td>                               
-                                <a onclick="DeleteRow()" id="DeleteButton" name="DeleteButton">Delete</a>
+                                <a onclick="DeleteRowAction()" id="DeleteButton" name="DeleteButton">Delete</a>
                             </td>
                         </tr>
                         row++;
@@ -90,11 +90,20 @@
             <tfoot>
                 <tr>
                     <td>
-                        <select class="form-control" id="ddl_productID" name="ddl_productID">                            
+                        <select class="form-control" id="ddl_productID" name="ddl_productID">
                         </select>
                     </td>
-                    <td><input type="text" id="txtCountry" /></td>
                     <td><input type="button" id="btnAdd" value="Add" onclick="AddProduct()" /></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td><label id="lb_TotalAmount" for="lb_TotalAmount"></label></td>
                 </tr>
             </tfoot>
 
@@ -114,12 +123,18 @@
 <script>
     const _apiuri_orderdetail = window.location.origin + '/api/ClinicOrderDetail';
     const _apiuri_product = window.location.origin + '/api/Products';
+    
     /**/
     let details = [];
     let products = [];
     $(document).ready(function () {
         // alert("Test");
         GetProductList();
+        CalTotalAmount();
+        $('input[name="item.product.Price"]').on("change", function () {
+            CalTotalAmount();
+        });
+        
     });
     function GetProductList() {
         $.ajax({
@@ -140,7 +155,7 @@
             }
         });
     }
-    function AddProduct() {        
+    function AddProduct() {
         var result = products[0].filter(obj => {
             return obj.productID === parseInt($('#ddl_productID').val());
         });
@@ -153,7 +168,7 @@
                             <input type="hidden" id="OrderDetails[` + arr_ClinicOrderDetailID + `].ClinicOrderID" name="item.ClinicOrderID" value="` + @Model.ClinicOrderId + `" />
                             <input id = "OrderDetails[` + arr_ClinicOrderDetailID + `].ClinicOrderDetailID" name = "item.ClinicOrderDetailID" value = "` + new_ClinicOrderDetailID +`" />
                             <input type = "hidden" id ="OrderDetails[` + arr_ClinicOrderDetailID + `].ProductID" name = "item.ProductID" value = "` + result[0].productID +`" />
-                            </td>                         
+                            </td>
                             <td>
                             <input id = "OrderDetails[` + arr_ClinicOrderDetailID + `].Quantity" name = "item.Quantity" value = "1" />
                             </td>
@@ -161,13 +176,15 @@
                                 <input id = "OrderDetails[` + arr_ClinicOrderDetailID + `].Name" name = "item.product.Name" value = "` + result[0].name+`" />
                             </td>
                             <td>
-                                <input id = "OrderDetails[` + arr_ClinicOrderDetailID + `].Price" name = "item.product.Price" value = "` + result[0].price +`" />                                
+                                <input id = "OrderDetails[` + arr_ClinicOrderDetailID + `].Price" name = "item.product.Price" value = "` + result[0].price +`" />
                             </td>
                             <td>
-                                <a onclick="DeleteRow()" id="DeleteButton" name="DeleteButton">Delete</a>
+                                <a onclick="DeleteRowAction()" id="DeleteButton" name="DeleteButton">Delete</a>
                             </td>
                         </tr>`;
         $("#details > tbody").append(new_trtd);
+        ResortOrderDetailID();
+        CalTotalAmount();
     }
     function _displayItems(data) {
         const tBody = document.getElementById('details');
@@ -226,13 +243,13 @@
                 Quantity: tr.find('td:eq(1) input[name="item.Quantity"]').val(),
                 Price: tr.find('td:eq(3) input[name="item.product.Price"]').val()
             };
-            console.log("loop through each row");
-            console.log(data);
+            //console.log("loop through each row");
+            //console.log(data);
             Details.push(data);
         });
 
-        ////for (i = 0; i < myTab.rows.length; i++) {       
-        //for (i = 0; i < myTab.length; i++) {       
+        ////for (i = 0; i < myTab.rows.length; i++) {
+        //for (i = 0; i < myTab.length; i++) {
         //  //  if (i == 0 || i == myTab.rows.length)
         //  //      continue;
         //    var data = {
@@ -248,7 +265,7 @@
         //};
 
         console.log(JSON.stringify(Details));
-        
+
         $.ajax({
             type: "POST",
             url: `${_apiuri_orderdetail}`,
@@ -274,19 +291,45 @@
 
     }
     //https://www.geeksforgeeks.org/how-to-dynamically-add-remove-table-rows-using-jquery/?ref=rp
-    function DeleteRow() {       
-        $("#details").on("click", "#DeleteButton", function () {
+    function DeleteRowAction() {
+        $("#details > tbody > tr").on('click', '#DeleteButton', function () {
             $(this).closest("tr").remove();
-            var rowID = 1;
-            $("#details > tbody > tr").each(function () {
-                var tr = $(this);
-                console.log("orginal " + tr.find('td:eq(0) input[name="item.ClinicOrderDetailID"]').val());
-                console.log("newval " + rowID);
-                tr.find('td:eq(0) input[name="item.ClinicOrderDetailID"]').val(rowID);
-                rowID++;
-            });
+            ResortOrderDetailID();
+            CalTotalAmount();
+        });       
+    }
+    function DeleteRow() {
+        $("#details").on("click", "#DeleteButton", function () {
+            $(this).closest("tr").remove(); 
+        });      
+        console.log("1 - deleteRow()");
+    }
+    function ResortOrderDetailID() {
+        var rowID = 1;
+        //RESORT the orderdetailID
+        $("#details > tbody > tr").each(function () {
+            var tr = $(this);
+            console.log('rowID : ' + rowID);
+            tr.find('td:eq(0) input[name="item.ClinicOrderDetailID"]').val(rowID);
+            rowID++;
         });
+        console.log("2 - ResortOrderDetailID()");
+    }
+    function CalTotalAmount() {
+        console.log("3 - CalTotalAmount()");
+        // LOOP THROUGH EACH ROW OF THE TABLE AFTER HEADER.
+        var total = 0;
+        var rowID = 0;
+        $("#details > tbody > tr").each(function () {
+            var tr = $(this);            
+            total += parseFloat(tr.find('td:eq(3) input[name="item.product.Price"]').val());  
+            console.log('total' + total);
+            console.log('rowID '+ rowID);
+            rowID++;
+        });
+        $("#lb_TotalAmount").text(total);        
     }
     
+
 </script>
 
