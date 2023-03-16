@@ -1,0 +1,83 @@
+﻿@model tutor1.Models.Entity.ClinicOrder
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>ClinicOrder</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="clinicOrder_seqid" class="control-label"></label>
+                <input asp-for="clinicOrder_seqid" class="form-control" />
+                <span asp-validation-for="clinicOrder_seqid" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateOfClinicOrder" class="control-label"></label>
+                <input asp-for="DateOfClinicOrder" class="form-control" />
+                <span asp-validation-for="DateOfClinicOrder" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="seeDoctor" class="control-label"></label>
+                <input asp-for="seeDoctor" class="form-control" />
+                <span asp-validation-for="seeDoctor" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Amount" class="control-label"></label>
+                <input asp-for="Amount" class="form-control" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastUpdatedTime" class="control-label"></label>
+                <input asp-for="LastUpdatedTime" class="form-control" />
+                <span asp-validation-for="LastUpdatedTime" class="text-danger"></span>
+            </div>
+
+            <div class="content">
+                <div class="float-right">
+                    <ul id="update-products">
+                        <li>
+                            <div><div class="item">Product ID</div><span></span></div>
+                            <div><div class="item">Name</div> <input type="text" /></div>
+                            <div><div class="item">Price ($)</div> <input type="text" /></div>
+                            <div><div class="item">Actual Cost ($)</div> <input type="text" /></div>
+                            <div>
+                                <input type="button" value="Update" />
+                                <input type="button" value="Delete Item" />
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="float-right">
+                    <h2>Add New Product</h2>
+                    <form id="product">
+                        @Html.ValidationSummary(true)
+                        <fieldset>
+                            <legend>Contact</legend>
+                            @Html.EditorForModel()
+                            <p>
+                                <input type="submit" value="Save" />
+                            </p>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

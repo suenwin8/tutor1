@@ -1,0 +1,48 @@
+﻿@model tutor1.Models.Entity.ClinicOrder
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>ClinicOrder</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.clinicOrder_seqid)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.clinicOrder_seqid)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DateOfClinicOrder)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DateOfClinicOrder)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.seeDoctor)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.seeDoctor)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Amount)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Amount)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.LastUpdatedTime)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.LastUpdatedTime)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ClinicOrderId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
