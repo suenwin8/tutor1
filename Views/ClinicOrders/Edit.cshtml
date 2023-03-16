@@ -80,7 +80,7 @@
                                 @Html.TextBoxFor(modelItem => item.product.Price, new { id = "OrderDetails[" + row + "].Price", name = "OrderDetails[" + row + "].Price" })
                             </td>
                             <td>                               
-                                <a asp-action="Delete" asp-route-id="@item.ClinicOrderDetailID">Delete</a>
+                                <a onclick="DeleteRow()" id="DeleteButton" name="DeleteButton">Delete</a>
                             </td>
                         </tr>
                         row++;
@@ -164,7 +164,7 @@
                                 <input id = "OrderDetails[` + arr_ClinicOrderDetailID + `].Price" name = "item.product.Price" value = "` + result[0].price +`" />                                
                             </td>
                             <td>
-                                <a >Delete</a>
+                                <a onclick="DeleteRow()" id="DeleteButton" name="DeleteButton">Delete</a>
                             </td>
                         </tr>`;
         $("#details > tbody").append(new_trtd);
@@ -273,5 +273,20 @@
         });
 
     }
+    //https://www.geeksforgeeks.org/how-to-dynamically-add-remove-table-rows-using-jquery/?ref=rp
+    function DeleteRow() {       
+        $("#details").on("click", "#DeleteButton", function () {
+            $(this).closest("tr").remove();
+            var rowID = 1;
+            $("#details > tbody > tr").each(function () {
+                var tr = $(this);
+                console.log("orginal " + tr.find('td:eq(0) input[name="item.ClinicOrderDetailID"]').val());
+                console.log("newval " + rowID);
+                tr.find('td:eq(0) input[name="item.ClinicOrderDetailID"]').val(rowID);
+                rowID++;
+            });
+        });
+    }
+    
 </script>
 
