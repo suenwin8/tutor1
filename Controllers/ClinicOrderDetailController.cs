@@ -24,26 +24,42 @@ namespace tutor1.Controllers
         {
             _context = context;
         }
-        // GET: api/<ClinicOrderDetailController>
+        // GET: api/<ClinicOrderDetail>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<ActionResult<IEnumerable<ClinicOrderDetailDTO>>> GetDetails()
         {
-            return new string[] { "value1", "value2" };
+            return Ok(MapDetailByID(null));
         }
 
-        // GET api/<ClinicOrderDetail>/5
+        // GET: api/<ClinicOrderDetail>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<ClinicOrderDetail>> GetDetailsByOrderID(int id)
         {
-            return "value";
+            var detail = await _context.ClinicOrderDetails
+                .Include(d=>d.product)
+                .Include(d=>d.Order)
+                .Where(i => i.ClinicOrderID == id).ToListAsync();
+            if (detail == null)
+            {
+                return NotFound(ErrorCode.RecordNotFound.ToString());
+            }
+
+            return Ok(detail);
         }
 
         // POST api/<ClinicOrderDetail>
         [HttpPost]
-        public async Task<ActionResult<List<ClinicOrderDetailDTO>>> Post([FromBody] List<ClinicOrderDetailDTO> detail)
-        {
-            var result = detail;
-            return Ok(JsonConvert.SerializeObject(result));
+        public async Task<ActionResult<List<ClinicOrderDetail>>> Post([FromBody] List<ClinicOrderDetail> detail)
+        {           
+            if (detail != null)
+            {
+                foreach (ClinicOrderDetail row in detail)
+                {
+                    _context.ClinicOrderDetails.Add(row);
+                }
+                await _context.SaveChangesAsync();
+            }
+            return Ok(JsonConvert.SerializeObject(detail));
         }
 
         // PUT api/<ClinicOrderDetail>/5
@@ -55,9 +71,9 @@ namespace tutor1.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, List<ClinicOrderDetail> detail)
+        public async Task<IActionResult> Put(int id, ClinicOrderDetail detail)
         {
-            if (id != detail.First().ClinicOrderID)
+            if (id != detail.ClinicOrderID)
             {
                 return BadRequest();
             }
@@ -70,7 +86,7 @@ namespace tutor1.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!OrderDetailExists(id,detail.First().ClinicOrderDetailID))
+                if (!OrderDetailExists(id,detail.ClinicOrderDetailID))
                 {
                     return NotFound(ErrorCode.RecordNotFound.ToString());
                 }
@@ -83,10 +99,82 @@ namespace tutor1.Controllers
             return NoContent();
         }
 
-        // DELETE api/<ClinicOrderDetailController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+
+        #region DeleteActionAsync
+        public async Task<ActionResult<ClinicOrderDetail>> DeleteActionAsync(int orderID, int? detailID)
         {
+            int _detailID = detailID.HasValue ? detailID.Value : 0;
+            if (orderID != 0 && _detailID != 0)
+                await DeleteByOrderDetailIDAsync(orderID, _detailID);
+            else
+                await DeleteByOrderIDAsync(orderID);
+            return Ok();
+        }
+
+        public async Task<ActionResult<ClinicOrderDetail>> DeleteByOrderIDAsync(int orderID)
+        {
+            var detail = await _context.ClinicOrderDetails.Where(i => i.ClinicOrderID == orderID).ToListAsync();
+            if (detail == null)
+            {
+                return NotFound(ErrorCode.RecordNotFound.ToString());
+            }
+            foreach (ClinicOrderDetail row in detail)
+            {
+                await DeleteByOrderDetailIDAsync(row.ClinicOrderID, row.ClinicOrderDetailID);
+            }
+            return Ok();
+        }
+        public async Task<ActionResult<ClinicOrderDetail>> DeleteByOrderDetailIDAsync(int orderID, int detailID)
+        {
+            var detail = await _context.ClinicOrderDetails.FirstOrDefaultAsync(i => i.ClinicOrderDetailID == detailID && i.ClinicOrderID == orderID);
+            if (detail == null)
+            {
+                return NotFound(ErrorCode.RecordNotFound.ToString());
+            }
+
+            _context.ClinicOrderDetails.Remove(detail);
+            await _context.SaveChangesAsync();
+            return detail;
+        }
+
+        // DELETE api/<ClinicOrderDetailController>/DeleteItem
+        [HttpDelete("DeleteItem")]
+        public async Task<ActionResult<ClinicOrderDetail>> DeleteItem(int orderID, int? detailID)
+        {
+            return await DeleteActionAsync(orderID, detailID);            
+        }
+        #endregion
+
+        // Project products to product DTOs.
+        private IEnumerable<ClinicOrderDetailDTO> MapDetailByID(ClinicOrderDetailDTO detailDTO) 
+        {
+            if (detailDTO != null)
+            {
+                return from p in _context.ClinicOrderDetails.Include(d => d.product)
+                       where p.ClinicOrderDetailID == detailDTO.ClinicOrderDetailID && p.ClinicOrderID == detailDTO.ClinicOrderID
+                       select new ClinicOrderDetailDTO()
+                       {
+                           ClinicOrderDetailID = p.ClinicOrderDetailID,
+                           ClinicOrderID = p.ClinicOrderID,
+                           Price = p.Price,
+                           Quantity = p.Quantity,
+                           product = p.product,
+                           ProductID = p.ProductID
+                       };
+            }
+            else
+            {
+                return from p in _context.ClinicOrderDetails.Include(d => d.product)                       
+                       select new ClinicOrderDetailDTO()
+                       {
+                           ClinicOrderDetailID = p.ClinicOrderDetailID,
+                           ClinicOrderID = p.ClinicOrderID,
+                           Price = p.Price,
+                           Quantity = p.Quantity,
+                           product = p.product,
+                           ProductID = p.ProductID
+                       };
+            }            
         }
 
         private bool OrderDetailExists(int orderid, int detailid)

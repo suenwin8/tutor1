@@ -102,8 +102,8 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td></td>
                     <td><label id="lb_TotalAmount" for="lb_TotalAmount"></label></td>
+                    <td></td>
                 </tr>
             </tfoot>
 
@@ -308,8 +308,7 @@
         var rowID = 1;
         //RESORT the orderdetailID
         $("#details > tbody > tr").each(function () {
-            var tr = $(this);
-            console.log('rowID : ' + rowID);
+            var tr = $(this);            
             tr.find('td:eq(0) input[name="item.ClinicOrderDetailID"]').val(rowID);
             rowID++;
         });
@@ -322,9 +321,7 @@
         var rowID = 0;
         $("#details > tbody > tr").each(function () {
             var tr = $(this);            
-            total += parseFloat(tr.find('td:eq(3) input[name="item.product.Price"]').val());  
-            console.log('total' + total);
-            console.log('rowID '+ rowID);
+            total += parseFloat(tr.find('td:eq(3) input[name="item.product.Price"]').val());
             rowID++;
         });
         $("#lb_TotalAmount").text(total);        
