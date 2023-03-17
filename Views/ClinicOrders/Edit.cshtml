@@ -5,9 +5,15 @@
 }
 
 <h1>Edit</h1>
-
 <h4>ClinicOrder</h4>
 <hr />
+
+@{
+    if (ViewBag.Message != null)
+    {        
+        @Html.Raw(@ViewBag.Message)
+    }
+}
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
@@ -40,72 +46,72 @@
             </div>
 
             <table class="table" id="details">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().ClinicOrderDetailID)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().Quantity)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().product.Name)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().product.Price)
-                    </th>
-                    <th>
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().ClinicOrderDetailID)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().Quantity)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().product.Name)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().product.Price)
+                        </th>
+                        <th>
 
-                    </th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @{ var row = 0;
-                    @foreach (var item in Model.OrderDetails)
-                    {
-                        <tr>
-                            <td>
-                                @Html.HiddenFor(modelItem => item.ClinicOrderID, new { id = "OrderDetails[" + row + "].ClinicOrderID"})
-                                @Html.TextBoxFor(modelItem => item.ClinicOrderDetailID, new { id = "OrderDetails[" + row + "].ClinicOrderDetailID" })
-                                @Html.HiddenFor(modelItem => item.ProductID, new { id = "OrderDetails[" + row + "].ProductID" })
-                            </td>
-                            <td>
-                                @Html.TextBoxFor(modelItem => item.Quantity, new { id = "OrderDetails[" + row + "].Quantity" })
-                            </td>
-                            <td>
-                                @Html.TextBoxFor(modelItem => item.product.Name, new { id = "OrderDetails[" + row + "].Name" })
-                            </td>
-                            <td>
-                                @Html.TextBoxFor(modelItem => item.product.Price, new { id = "OrderDetails[" + row + "].Price" })
-                            </td>
-                            <td>                               
-                                <a onclick="DeleteRowAction()" id="DeleteButton" name="DeleteButton">Delete</a>
-                            </td>
-                        </tr>
-                        row++;
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ var row = 0;
+                        @foreach (var item in Model.OrderDetails)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.HiddenFor(modelItem => item.ClinicOrderID, new { id = "OrderDetails[" + row + "].ClinicOrderID" })
+                                    @Html.TextBoxFor(modelItem => item.ClinicOrderDetailID, new { id = "OrderDetails[" + row + "].ClinicOrderDetailID" })
+                                    @Html.HiddenFor(modelItem => item.ProductID, new { id = "OrderDetails[" + row + "].ProductID" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(modelItem => item.Quantity, new { id = "OrderDetails[" + row + "].Quantity" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(modelItem => item.product.Name, new { id = "OrderDetails[" + row + "].Name" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(modelItem => item.product.Price, new { id = "OrderDetails[" + row + "].Price" })
+                                </td>
+                                <td>
+                                    <a onclick="DeleteRowAction()" id="DeleteButton" name="DeleteButton">Delete</a>
+                                </td>
+                            </tr>
+                            row++;
+                        }
                     }
-                }
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td>
-                        <select class="form-control" id="ddl_productID" name="ddl_productID">
-                        </select>
-                    </td>
-                    <td><input type="button" id="btnAdd" value="Add" onclick="AddProduct()" /></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td><label id="lb_TotalAmount" for="lb_TotalAmount"></label></td>
-                    <td></td>
-                </tr>
-            </tfoot>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>
+                            <select class="form-control" id="ddl_productID" name="ddl_productID">
+                            </select>
+                        </td>
+                        <td><input type="button" id="btnAdd" value="Add" onclick="AddProduct()" /></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><label id="lb_TotalAmount" for="lb_TotalAmount"></label></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
 
                 <input type="button" value="Update" class="btn btn-primary" onclick="SendData()" />
             </table>
@@ -123,7 +129,7 @@
 <script>
     const _apiuri_orderdetail = window.location.origin + '/api/ClinicOrderDetail';
     const _apiuri_product = window.location.origin + '/api/Products';
-    
+
     /**/
     let details = [];
     let products = [];
@@ -134,7 +140,7 @@
         $('input[name="item.product.Price"]').on("change", function () {
             CalTotalAmount();
         });
-        
+
     });
     function GetProductList() {
         $.ajax({
@@ -296,19 +302,19 @@
             $(this).closest("tr").remove();
             ResortOrderDetailID();
             CalTotalAmount();
-        });       
+        });
     }
     function DeleteRow() {
         $("#details").on("click", "#DeleteButton", function () {
-            $(this).closest("tr").remove(); 
-        });      
+            $(this).closest("tr").remove();
+        });
         console.log("1 - deleteRow()");
     }
     function ResortOrderDetailID() {
         var rowID = 1;
         //RESORT the orderdetailID
         $("#details > tbody > tr").each(function () {
-            var tr = $(this);            
+            var tr = $(this);
             tr.find('td:eq(0) input[name="item.ClinicOrderDetailID"]').val(rowID);
             rowID++;
         });
@@ -320,13 +326,14 @@
         var total = 0;
         var rowID = 0;
         $("#details > tbody > tr").each(function () {
-            var tr = $(this);            
+            var tr = $(this);
             total += parseFloat(tr.find('td:eq(3) input[name="item.product.Price"]').val());
             rowID++;
         });
-        $("#lb_TotalAmount").text(total);        
+        $("#lb_TotalAmount").text(total);
+        $("#Amount").val(total);
     }
-    
+
 
 </script>
 

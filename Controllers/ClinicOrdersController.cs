@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using tutor1.Extension;
 using tutor1.Models.Context;
 using tutor1.Models.Entity;
+using tutor1.Services;
 
 namespace tutor1.Controllers
 {
@@ -16,15 +18,16 @@ namespace tutor1.Controllers
     {
         private readonly ClinicContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        
+        private readonly IConfiguration _configuration;
 
-        public ClinicOrdersController(ClinicContext context, IHttpContextAccessor httpContextAccessor)
+
+        public ClinicOrdersController(ClinicContext context, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             var baseUrl = _httpContextAccessor.HttpContext?.Request.BaseUrl();
             ViewData["contentPath"] = baseUrl;
-
+            _configuration = configuration;
         }
 
         // GET: ClinicOrders
@@ -121,9 +124,11 @@ namespace tutor1.Controllers
                         throw;
                     }
                 }
-                 return RedirectToAction(nameof(Index));
-                //return View(clinicOrder);
+                //return RedirectToAction(nameof(Index));
+                clinicOrder = await _context.ClinicOrders.Include(c => c.OrderDetails).ThenInclude(d => d.product).FirstOrDefaultAsync(m => m.ClinicOrderId == id);
+                ViewBag.Message = DisplayMessage.ShowAlert(Alerts.Success, _configuration["HTMLDisplayWording:AlertMessage:Success"]);                                
             }
+            
             return View(clinicOrder);
         }
 

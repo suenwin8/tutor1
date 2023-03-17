@@ -53,11 +53,19 @@ namespace tutor1.Controllers
         {           
             if (detail != null)
             {
-                foreach (ClinicOrderDetail row in detail)
+                try
                 {
-                    _context.ClinicOrderDetails.Add(row);
+                    await DeleteActionAsync(detail.First().ClinicOrderID,null);
+                    foreach (ClinicOrderDetail row in detail)
+                    {                        
+                        _context.ClinicOrderDetails.Add(row);
+                    }                
+                    await _context.SaveChangesAsync();
                 }
-                await _context.SaveChangesAsync();
+                catch (DbUpdateConcurrencyException ex)
+                {
+                        throw ex.InnerException;                    
+                }
             }
             return Ok(JsonConvert.SerializeObject(detail));
         }
@@ -107,7 +115,7 @@ namespace tutor1.Controllers
             if (orderID != 0 && _detailID != 0)
                 await DeleteByOrderDetailIDAsync(orderID, _detailID);
             else
-                await DeleteByOrderIDAsync(orderID);
+                await DeleteByOrderIDAsync(orderID);            
             return Ok();
         }
 
@@ -133,7 +141,7 @@ namespace tutor1.Controllers
             }
 
             _context.ClinicOrderDetails.Remove(detail);
-            await _context.SaveChangesAsync();
+            //await _context.SaveChangesAsync();
             return detail;
         }
 
@@ -141,7 +149,9 @@ namespace tutor1.Controllers
         [HttpDelete("DeleteItem")]
         public async Task<ActionResult<ClinicOrderDetail>> DeleteItem(int orderID, int? detailID)
         {
-            return await DeleteActionAsync(orderID, detailID);            
+            await DeleteActionAsync(orderID, detailID);
+            await _context.SaveChangesAsync();
+            return Ok();
         }
         #endregion
 
