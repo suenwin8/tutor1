@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using tutor1.Extension;
 using tutor1.Models.Context;
+using tutor1.Models.DTO;
 using tutor1.Models.Entity;
 using tutor1.Services;
 
@@ -94,17 +96,54 @@ namespace tutor1.Controllers
             return View(clinicOrder);
         }
 
-        // POST: ClinicOrders/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ClinicOrderId,clinicOrder_seqid,DateOfClinicOrder,seeDoctor,customer,Amount,LastUpdatedTime,OrderDetails[]")] ClinicOrder clinicOrder)
+        //// POST: ClinicOrders/Edit/5
+        //// To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        //// more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        ////[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Edit(int id, [Bind("ClinicOrderId,clinicOrder_seqid,DateOfClinicOrder,seeDoctor,customer,Amount,LastUpdatedTime,OrderDetails[]")] ClinicOrder clinicOrder)
+        //{
+        //    if (id != clinicOrder.ClinicOrderId)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            _context.Update(clinicOrder);
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!ClinicOrderExists(clinicOrder.ClinicOrderId))
+        //            {
+        //                return NotFound();
+        //            }
+        //            else
+        //            {
+        //                throw;
+        //            }
+        //        }
+        //        //return RedirectToAction(nameof(Index));
+        //        clinicOrder = await _context.ClinicOrders.Include(c => c.OrderDetails).ThenInclude(d => d.product).FirstOrDefaultAsync(m => m.ClinicOrderId == id);
+        //        ViewBag.Message = DisplayMessage.ShowAlert(Alerts.Success, _configuration["HTMLDisplayWording:AlertMessage:Success"]);                                
+        //    }
+
+        //    return View(clinicOrder);
+        //}
+
+        
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditOrder(int id, ClinicOrderDTO clinicOrder)
         {
-            if (id != clinicOrder.ClinicOrderId)
+            if (clinicOrder.ClinicOrderId == int.MinValue)
             {
                 return NotFound();
             }
+            ClinicOrder view_clinicOrder = new ClinicOrder();            
+            view_clinicOrder.OrderDetails = JsonConvert.DeserializeObject<List<ClinicOrderDetail>>(clinicOrder.OrderDetails);
 
             if (ModelState.IsValid)
             {
@@ -125,10 +164,14 @@ namespace tutor1.Controllers
                     }
                 }
                 //return RedirectToAction(nameof(Index));
-                clinicOrder = await _context.ClinicOrders.Include(c => c.OrderDetails).ThenInclude(d => d.product).FirstOrDefaultAsync(m => m.ClinicOrderId == id);
-                ViewBag.Message = DisplayMessage.ShowAlert(Alerts.Success, _configuration["HTMLDisplayWording:AlertMessage:Success"]);                                
+
+                view_clinicOrder = await _context.ClinicOrders.Include(c => c.OrderDetails).ThenInclude(d => d.product).FirstOrDefaultAsync(m => m.ClinicOrderId == clinicOrder.ClinicOrderId);
+                ViewBag.Message = DisplayMessage.ShowAlert(Alerts.Success, _configuration["HTMLDisplayWording:AlertMessage:Success"]);
             }
+            else
+            { }
             
+
             return View(clinicOrder);
         }
 

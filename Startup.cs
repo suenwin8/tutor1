@@ -1,17 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
+using tutor1.Extension;
 using tutor1.Interfaces;
-using tutor1.Models;
 using tutor1.Models.Context;
 using tutor1.Services;
 
@@ -33,6 +28,7 @@ namespace tutor1
             services.AddMvc().AddNewtonsoftJson(o =>
             {
                 o.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                
             });
 
             #region DB
@@ -58,6 +54,9 @@ namespace tutor1
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // Insert the middleware before all others in the pipeline.
+            app.UseRequestResponseLogging();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -76,6 +75,8 @@ namespace tutor1
             app.UseRouting();
 
             app.UseAuthorization();
+            //MiddleWare for capture http content
+            
 
             app.UseEndpoints(endpoints =>
             {

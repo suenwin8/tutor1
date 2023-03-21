@@ -20,7 +20,7 @@ namespace tutor1.Models.DTO
         [DataType(DataType.Date)]
         public DateTime LastUpdatedTime { get; set; }
         // Navigation property
-        public ICollection<ClinicOrderDetailDTO> OrderDetails { get; set; }
+        public string OrderDetails { get; set; }
 
 
 
