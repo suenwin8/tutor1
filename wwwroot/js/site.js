@@ -3,7 +3,10 @@
 
 // Write your JavaScript code.
 
-const _url = window.location.origin+'/api/todoitems';
+const _url = window.location.origin + '/api/todoitems';
+const _apiuri_orderdetail = window.location.origin + '/api/ClinicOrderDetail';
+const _apiuri_product = window.location.origin + '/api/Products';
+const _apiuri_order = window.location.origin + '/api/ClinicOrderAPI';
 let todos = [];
 
 function getItems() {

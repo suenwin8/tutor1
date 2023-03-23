@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -43,8 +44,13 @@ namespace tutor1
             services.AddControllersWithViews();
             services.AddHttpContextAccessor();
             // configure DI for application services
-
-           
+            #region AutoMapper
+            var mapperConfig = new MapperConfiguration(mc => {
+                mc.AddProfile(new AutoMapperProfile());
+            });
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
+            #endregion
 
             services.AddScoped<IWeather, WeatherService>();
             services.AddScoped<DbContext, ClinicContext>();

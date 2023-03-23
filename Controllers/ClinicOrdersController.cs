@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -21,15 +22,20 @@ namespace tutor1.Controllers
         private readonly ClinicContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-
-        public ClinicOrdersController(ClinicContext context, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+        public ClinicOrdersController(ClinicContext context, 
+            IHttpContextAccessor httpContextAccessor, 
+            IConfiguration configuration,
+            IMapper mapper
+            )
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             var baseUrl = _httpContextAccessor.HttpContext?.Request.BaseUrl();
             ViewData["contentPath"] = baseUrl;
             _configuration = configuration;
+            _mapper = mapper;
         }
 
         // GET: ClinicOrders
@@ -93,7 +99,14 @@ namespace tutor1.Controllers
             {
                 return NotFound();
             }
-            return View(clinicOrder);
+
+            ClinicOrderDTO view_clinicOrder = new ClinicOrderDTO();
+            view_clinicOrder = _mapper.Map<ClinicOrder,ClinicOrderDTO>(clinicOrder);
+
+            ViewBag.Message = "Edit 1 -";
+            ViewData["Message2"] = "Edit 1 -";
+
+            return View(view_clinicOrder);
         }
 
         //// POST: ClinicOrders/Edit/5
@@ -134,21 +147,23 @@ namespace tutor1.Controllers
         //    return View(clinicOrder);
         //}
 
-        
-        //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditOrder(int id, ClinicOrderDTO clinicOrder)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, ClinicOrderDTO view_clinicOrder)
         {
-            if (clinicOrder.ClinicOrderId == int.MinValue)
+            if (view_clinicOrder.ClinicOrderId == int.MinValue)
             {
                 return NotFound();
             }
-            ClinicOrder view_clinicOrder = new ClinicOrder();            
-            view_clinicOrder.OrderDetails = JsonConvert.DeserializeObject<List<ClinicOrderDetail>>(clinicOrder.OrderDetails);
-
+            ClinicOrder clinicOrder = new ClinicOrder();
+            clinicOrder = _mapper.Map<ClinicOrderDTO, ClinicOrder>(view_clinicOrder);
+            clinicOrder.OrderDetails = JsonConvert.DeserializeObject<List<ClinicOrderDetail>>(view_clinicOrder.json_OrderDetails);
+            
             if (ModelState.IsValid)
             {
                 try
                 {
+
                     _context.Update(clinicOrder);
                     await _context.SaveChangesAsync();
                 }
@@ -165,15 +180,25 @@ namespace tutor1.Controllers
                 }
                 //return RedirectToAction(nameof(Index));
 
-                view_clinicOrder = await _context.ClinicOrders.Include(c => c.OrderDetails).ThenInclude(d => d.product).FirstOrDefaultAsync(m => m.ClinicOrderId == clinicOrder.ClinicOrderId);
-                ViewBag.Message = DisplayMessage.ShowAlert(Alerts.Success, _configuration["HTMLDisplayWording:AlertMessage:Success"]);
+                //view_clinicOrder = await _context.ClinicOrders.Include(c => c.OrderDetails).ThenInclude(d => d.product).FirstOrDefaultAsync(m => m.ClinicOrderId == clinicOrder.ClinicOrderId);
+
+                TempData["Message"] = DisplayMessage.ShowAlert(Alerts.Success, _configuration["HTMLDisplayWording:AlertMessage:Success"]);
             }
             else
-            { }
-            
+            {
+                throw new Exception("Fail to validate the form.");
+            }
 
-            return View(clinicOrder);
+            ViewBag.Message = "Edit 2 -";
+            ViewData["Message2"] = "Edit 2 -";
+            view_clinicOrder.OrderDetails = clinicOrder.OrderDetails;
+
+            return View(view_clinicOrder);
+            //return Json(clinicOrder);
         }
+
+        
+
 
         // GET: ClinicOrders/Delete/5
         public async Task<IActionResult> Delete(int? id)

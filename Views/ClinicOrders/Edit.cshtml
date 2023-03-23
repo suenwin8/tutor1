@@ -1,22 +1,29 @@
-﻿@model tutor1.Models.Entity.ClinicOrder
+﻿@model tutor1.Models.DTO.ClinicOrderDTO
 
 @{
     ViewData["Title"] = "Edit";
+    
 }
 
 <h1>Edit</h1>
 <h4>ClinicOrder</h4>
 <hr />
 
-@{
-    if (ViewBag.Message != null)
-    {        
-        @Html.Raw(@ViewBag.Message)
-    }
-}
+
+
 <div class="row">
+
+    @{
+        if (ViewBag.Message != null)
+        {
+            @Html.Raw(ViewBag.Message)
+        }       
+    }
     <div class="col-md-4">
         <form asp-action="Edit" class="contact-form">
+            <div id="showDetails">
+                <p><b>@Html.ValidationSummary(true, "", new { @class = "text-danger" })</b></p>
+            </div>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ClinicOrderId" />
             <div class="form-group">
@@ -74,9 +81,9 @@
                                 <td>
 
                                     @*<input type='hidden'
-                                name="ClinicOrderID_'+@row+'"
-                                value='@item.ClinicOrderID' />*@
-                                    @Html.HiddenFor(modelItem => item.ClinicOrderID, new { id = "OrderDetails[" + row + "].ClinicOrderID" })
+                            name="ClinicOrderID_'+@row+'"
+                            value='@item.ClinicOrderID' />*@
+                                    @Html.HiddenFor(modelItem => item.ClinicOrderID, new { id = "ClinicOrderID" })
                                     @Html.TextBoxFor(modelItem => item.ClinicOrderDetailID, new { id = "ClinicOrderDetailID" })
                                     @Html.HiddenFor(modelItem => item.ProductID, new { id = "ProductID" })
                                 </td>
@@ -87,7 +94,7 @@
                                     @Html.TextBoxFor(modelItem => item.product.Name, new { id = "Name" })
                                 </td>
                                 <td>
-                                    @Html.TextBoxFor(modelItem => item.product.Price, new { id = "Price" })
+                                    @Html.TextBoxFor(modelItem => item.Price, new { id = "Price" })
                                 </td>
                                 <td>
                                     <a onclick="DeleteRowAction()" id="DeleteButton" name="DeleteButton">Delete</a>
@@ -115,11 +122,11 @@
                         <td><label id="lb_TotalAmount" for="lb_TotalAmount"></label></td>
                         <td></td>
                     </tr>
-                </tfoot>
-
+                </tfoot>                
                 <input type="button" value="Update" class="btn btn-primary" onclick="SendData()" />
             </table>
             <div class="form-group">
+                @Html.HiddenFor(model => model.json_OrderDetails)
                 <input type="submit" value="Save" class="btn btn-primary" />
                 <input type="button" value="get rows and sent them to server" id="send-data" class="btn btn-primary" />
             </div>
@@ -137,21 +144,14 @@
 </div>
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script>
-    const _apiuri_orderdetail = window.location.origin + '/api/ClinicOrderDetail';
-    const _apiuri_product = window.location.origin + '/api/Products';
-    const _apiuri_order = window.location.origin + '/api/ClinicOrderAPI';
-    const form = document.querySelector('.contact-form');
-
-    /**/
+    const form = document.querySelector('.contact-form');    
     let details = [];
     let products = [];
     $(document).ready(function () {
         form.addEventListener('submit', handleFormSubmit);
-
-
         GetProductList();
         CalTotalAmount();
-        $('input[name="item.product.Price"]').on("change", function () {
+        $('input[name="item.Price"]').on("change", function () {
             CalTotalAmount();
         });
 
@@ -245,7 +245,7 @@
                                 <input id = "OrderDetails[` + arr_ClinicOrderDetailID + `].Name" name = "item.product.Name" value = "` + result[0].name+`" />
                             </td>
                             <td>
-                                <input id = "OrderDetails[` + arr_ClinicOrderDetailID + `].Price" name = "item.product.Price" value = "` + result[0].price +`" />
+                                <input id = "OrderDetails[` + arr_ClinicOrderDetailID + `].Price" name = "item.Price" value = "` + result[0].price +`" />
                             </td>
                             <td>
                                 <a onclick="DeleteRowAction()" id="DeleteButton" name="DeleteButton">Delete</a>
@@ -390,7 +390,7 @@
         var rowID = 0;
         $("#details > tbody > tr").each(function () {
             var tr = $(this);
-            total += parseFloat(tr.find('td:eq(3) input[name="item.product.Price"]').val());
+            total += parseFloat(tr.find('td:eq(3) input[name="item.Price"]').val());
             rowID++;
         });
         $("#lb_TotalAmount").text(total);
@@ -399,7 +399,7 @@
 
 
     function handleFormSubmit(event) {
-        event.preventDefault();
+        //event.preventDefault();
 
         const data = new FormData(event.target);
 
@@ -416,30 +416,34 @@
                 ClinicOrderDetailID: tr.find('td:eq(0) input[name="item.ClinicOrderDetailID"]').val(),
                 ProductID: tr.find('td:eq(0) input[name="item.ProductID"]').val(),
                 Quantity: tr.find('td:eq(1) input[name="item.Quantity"]').val(),
-                Price: tr.find('td:eq(3) input[name="item.product.Price"]').val()
+                Price: tr.find('td:eq(3) input[name="item.Price"]').val()
             };
             console.log("loop through each row");
             console.log(data);
             OrderDetails.push(data);
         });
-        formJSON.OrderDetails = JSON.stringify(OrderDetails, null, 2);
+        //formJSON.OrderDetails = JSON.stringify(OrderDetails, null, 2);
+        formJSON.json_OrderDetails = JSON.stringify(OrderDetails, null, 2);
 
         const results = document.querySelector('.results pre');
         results.innerText = JSON.stringify(formJSON, null, 2);
 
-          $.ajax({
+        $("#json_OrderDetails").val(JSON.stringify(OrderDetails, null, 2));
+
+        return true;
+          @*$.ajax({
                 type: "POST",
-                url: `@Url.Action("EditOrder","ClinicOrders")`,
-                data: formJSON,                
+                url: `@Url.Action("Edit","ClinicOrders")`,
+                data: formJSON,
                 traditional: true,
-                success: function (data) {
-                    console.log(data);
+              success: function (data) {                  
+                  alert('success'); 
                 },
                 error: function (data) {
-                    alert(data);
+                    alert(JSON.stringify(data));
                 }
 
-            });
+            });*@
     }
 
 

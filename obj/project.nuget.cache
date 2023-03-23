@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "Agc+c1CHbKH5Ni/3ZzC1XWnO2EkEC8tlY4E3moTRyWT54Mn4yCI7MEnyWYxUI20rw1wyNDVeP8/gs/jH5sXGUQ==",
+  "dgSpecHash": "xdYmLdzSisnf202SD7LDYLII0xi5btvAZEml0AhjmquR4454k67OY//NCc87B2y+Jv4OrmQa29jO5t3d5tEunQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\RTHK USER\\source\\repos\\tutor1\\tutor1.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\RTHK USER\\.nuget\\packages\\automapper\\6.1.1\\automapper.6.1.1.nupkg.sha512",
+    "C:\\Users\\RTHK USER\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\3.1.0\\automapper.extensions.microsoft.dependencyinjection.3.1.0.nupkg.sha512",
     "C:\\Users\\RTHK USER\\.nuget\\packages\\microsoft.aspnetcore.html.abstractions\\2.2.0\\microsoft.aspnetcore.html.abstractions.2.2.0.nupkg.sha512",
     "C:\\Users\\RTHK USER\\.nuget\\packages\\microsoft.aspnetcore.jsonpatch\\3.1.32\\microsoft.aspnetcore.jsonpatch.3.1.32.nupkg.sha512",
     "C:\\Users\\RTHK USER\\.nuget\\packages\\microsoft.aspnetcore.mvc.newtonsoftjson\\3.1.32\\microsoft.aspnetcore.mvc.newtonsoftjson.3.1.32.nupkg.sha512",
@@ -113,6 +115,7 @@
     "C:\\Users\\RTHK USER\\.nuget\\packages\\system.diagnostics.diagnosticsource\\4.7.1\\system.diagnostics.diagnosticsource.4.7.1.nupkg.sha512",
     "C:\\Users\\RTHK USER\\.nuget\\packages\\system.diagnostics.tools\\4.3.0\\system.diagnostics.tools.4.3.0.nupkg.sha512",
     "C:\\Users\\RTHK USER\\.nuget\\packages\\system.diagnostics.tracing\\4.3.0\\system.diagnostics.tracing.4.3.0.nupkg.sha512",
+    "C:\\Users\\RTHK USER\\.nuget\\packages\\system.dynamic.runtime\\4.3.0\\system.dynamic.runtime.4.3.0.nupkg.sha512",
     "C:\\Users\\RTHK USER\\.nuget\\packages\\system.globalization\\4.3.0\\system.globalization.4.3.0.nupkg.sha512",
     "C:\\Users\\RTHK USER\\.nuget\\packages\\system.globalization.calendars\\4.3.0\\system.globalization.calendars.4.3.0.nupkg.sha512",
     "C:\\Users\\RTHK USER\\.nuget\\packages\\system.globalization.extensions\\4.3.0\\system.globalization.extensions.4.3.0.nupkg.sha512",
@@ -124,6 +127,7 @@
     "C:\\Users\\RTHK USER\\.nuget\\packages\\system.io.filesystem.primitives\\4.3.0\\system.io.filesystem.primitives.4.3.0.nupkg.sha512",
     "C:\\Users\\RTHK USER\\.nuget\\packages\\system.linq\\4.3.0\\system.linq.4.3.0.nupkg.sha512",
     "C:\\Users\\RTHK USER\\.nuget\\packages\\system.linq.expressions\\4.3.0\\system.linq.expressions.4.3.0.nupkg.sha512",
+    "C:\\Users\\RTHK USER\\.nuget\\packages\\system.linq.queryable\\4.3.0\\system.linq.queryable.4.3.0.nupkg.sha512",
     "C:\\Users\\RTHK USER\\.nuget\\packages\\system.memory\\4.5.3\\system.memory.4.5.3.nupkg.sha512",
     "C:\\Users\\RTHK USER\\.nuget\\packages\\system.net.http\\4.3.0\\system.net.http.4.3.0.nupkg.sha512",
     "C:\\Users\\RTHK USER\\.nuget\\packages\\system.net.nameresolution\\4.3.0\\system.net.nameresolution.4.3.0.nupkg.sha512",
