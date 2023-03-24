@@ -27,7 +27,6 @@ namespace tutor1.Models
                     new Product() { Name = "Duplixent", Price = 7500,  ProductID=1 },
                     new Product() { Name = "Consult Fee", Price = 1000,  ProductID =2 }
                 };
-
                 products.ForEach(p => context.products.Add(p));
                 context.SaveChanges();
                 
@@ -36,22 +35,19 @@ namespace tutor1.Models
                    new ClinicOrder{ customer = "Nicole",
                     ClinicOrderId = 1,
                     DateOfClinicOrder= DateTime.Parse("2023-01-01"),
-                    seeDoctor=false,
-                    Amount=0,
+                    seeDoctor=false,                    
                     clinicOrder_seqid="20230101_0001",
                     LastUpdatedTime=DateTime.Parse("2023-01-01") },
                    new ClinicOrder{ customer = "Nicole",
                     ClinicOrderId = 2,
                     DateOfClinicOrder= DateTime.Parse("2023-01-02"),
-                    seeDoctor=false,
-                    Amount=0,
+                    seeDoctor=false,                    
                     clinicOrder_seqid="20230102_0001",
                     LastUpdatedTime=DateTime.Parse("2023-01-02") },
                    new ClinicOrder{ customer = "Nicole",
                     ClinicOrderId = 3,
                     DateOfClinicOrder= DateTime.Parse("2023-01-03"),
-                    seeDoctor=false,
-                    Amount=0,
+                    seeDoctor=false,                    
                     clinicOrder_seqid="20230103_0001",
                     LastUpdatedTime=DateTime.Parse("2023-01-03") },
                 };
@@ -67,11 +63,11 @@ namespace tutor1.Models
 
                 var od = new List<ClinicOrderDetail>()
                 {
-                    new ClinicOrderDetail() {Quantity = 2, ClinicOrderDetailID=1, ClinicOrderID=1, ProductID=1},
-                    new ClinicOrderDetail() {Quantity = 1, ClinicOrderDetailID=2, ClinicOrderID=1, ProductID=2},
-                    new ClinicOrderDetail() {Quantity = 2, ClinicOrderDetailID=1, ClinicOrderID=2, ProductID=1},
-                    new ClinicOrderDetail() {Quantity = 1, ClinicOrderDetailID=2, ClinicOrderID=2, ProductID=2},
-                    new ClinicOrderDetail() {Quantity = 1, ClinicOrderDetailID=1, ClinicOrderID=3, ProductID=1},
+                    new ClinicOrderDetail() {Quantity = 2, ClinicOrderDetailID=1, ClinicOrderID=1, ProductID= products.Single( s => s.ProductID == 1).ProductID},
+                    new ClinicOrderDetail() {Quantity = 1, ClinicOrderDetailID=2, ClinicOrderID=1, ProductID= products.Single( s => s.ProductID == 2).ProductID},
+                    new ClinicOrderDetail() {Quantity = 2, ClinicOrderDetailID=1, ClinicOrderID=2, ProductID= products.Single( s => s.ProductID == 1).ProductID},
+                    new ClinicOrderDetail() {Quantity = 1, ClinicOrderDetailID=2, ClinicOrderID=2, ProductID= products.Single( s => s.ProductID == 2).ProductID},
+                    new ClinicOrderDetail() {Quantity = 1, ClinicOrderDetailID=1, ClinicOrderID=3, ProductID= products.Single( s => s.ProductID == 1).ProductID},
                     
                 };
                 foreach (ClinicOrderDetail s in od)

@@ -1,4 +1,4 @@
-﻿@model tutor1.Models.DTO.ClinicOrderDTO
+﻿@model tutor1.Models.Entity.ClinicOrder
 
 @{
     ViewData["Title"] = "Edit";
@@ -126,7 +126,7 @@
                 <input type="button" value="Update" class="btn btn-primary" onclick="SendData()" />
             </table>
             <div class="form-group">
-                @Html.HiddenFor(model => model.json_OrderDetails)
+                @*@Html.HiddenFor(model => model.json_OrderDetails)*@
                 <input type="submit" value="Save" class="btn btn-primary" />
                 <input type="button" value="get rows and sent them to server" id="send-data" class="btn btn-primary" />
             </div>
@@ -234,18 +234,18 @@
         var new_ClinicOrderDetailID = $('#details >tbody >tr').length+1;
         var new_trtd = `<tr>
                             <td>
-                            <input type="hidden" id="OrderDetails[` + arr_ClinicOrderDetailID + `].ClinicOrderID" name="item.ClinicOrderID" value="` + @Model.ClinicOrderId + `" />
-                            <input id = "OrderDetails[` + arr_ClinicOrderDetailID + `].ClinicOrderDetailID" name = "item.ClinicOrderDetailID" value = "` + new_ClinicOrderDetailID +`" />
-                            <input type = "hidden" id ="OrderDetails[` + arr_ClinicOrderDetailID + `].ProductID" name = "item.ProductID" value = "` + result[0].productID +`" />
+                            <input type="hidden" id="ClinicOrderID" name="item.ClinicOrderID" value="` + @Model.ClinicOrderId + `" />
+                            <input id = "ClinicOrderDetailID" name = "item.ClinicOrderDetailID" value = "` + new_ClinicOrderDetailID +`" />
+                            <input type = "hidden" id ="ProductID" name = "item.ProductID" value = "` + result[0].productID +`" />
                             </td>
                             <td>
-                            <input id = "OrderDetails[` + arr_ClinicOrderDetailID + `].Quantity" name = "item.Quantity" value = "1" />
+                            <input id = "Quantity" name = "item.Quantity" value = "1" />
                             </td>
                             <td>
-                                <input id = "OrderDetails[` + arr_ClinicOrderDetailID + `].Name" name = "item.product.Name" value = "` + result[0].name+`" />
+                                <input id = "Name" name = "item.product.Name" value = "` + result[0].name+`" />
                             </td>
                             <td>
-                                <input id = "OrderDetails[` + arr_ClinicOrderDetailID + `].Price" name = "item.Price" value = "` + result[0].price +`" />
+                                <input id = "Price" name = "item.Price" value = "` + result[0].price +`" />
                             </td>
                             <td>
                                 <a onclick="DeleteRowAction()" id="DeleteButton" name="DeleteButton">Delete</a>
@@ -399,7 +399,7 @@
 
 
     function handleFormSubmit(event) {
-        //event.preventDefault();
+        event.preventDefault();
 
         const data = new FormData(event.target);
 
@@ -423,15 +423,15 @@
             OrderDetails.push(data);
         });
         //formJSON.OrderDetails = JSON.stringify(OrderDetails, null, 2);
-        formJSON.json_OrderDetails = JSON.stringify(OrderDetails, null, 2);
+        formJSON.json_OrderDetails = JSON.stringify(OrderDetails);
 
         const results = document.querySelector('.results pre');
         results.innerText = JSON.stringify(formJSON, null, 2);
 
-        $("#json_OrderDetails").val(JSON.stringify(OrderDetails, null, 2));
+        $("#json_OrderDetails").val(JSON.stringify(OrderDetails));
 
-        return true;
-          @*$.ajax({
+       // return true;
+          $.ajax({
                 type: "POST",
                 url: `@Url.Action("Edit","ClinicOrders")`,
                 data: formJSON,
@@ -443,7 +443,7 @@
                     alert(JSON.stringify(data));
                 }
 
-            });*@
+            });
     }
 
 

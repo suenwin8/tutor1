@@ -99,14 +99,10 @@ namespace tutor1.Controllers
             {
                 return NotFound();
             }
-
-            ClinicOrderDTO view_clinicOrder = new ClinicOrderDTO();
-            view_clinicOrder = _mapper.Map<ClinicOrder,ClinicOrderDTO>(clinicOrder);
-
             ViewBag.Message = "Edit 1 -";
             ViewData["Message2"] = "Edit 1 -";
 
-            return View(view_clinicOrder);
+            return View(clinicOrder);
         }
 
         //// POST: ClinicOrders/Edit/5
@@ -162,12 +158,12 @@ namespace tutor1.Controllers
             if (ModelState.IsValid)
             {
                 try
-                {
-
+                {                                      
                     _context.Update(clinicOrder);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                //catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
                     if (!ClinicOrderExists(clinicOrder.ClinicOrderId))
                     {
@@ -191,10 +187,9 @@ namespace tutor1.Controllers
 
             ViewBag.Message = "Edit 2 -";
             ViewData["Message2"] = "Edit 2 -";
-            view_clinicOrder.OrderDetails = clinicOrder.OrderDetails;
 
-            return View(view_clinicOrder);
-            //return Json(clinicOrder);
+            //return View(clinicOrder);
+            return Json(clinicOrder);
         }
 
         
