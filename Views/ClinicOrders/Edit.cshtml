@@ -1,4 +1,4 @@
-﻿@model tutor1.Models.Entity.ClinicOrder
+﻿@model tutor1.Models.DTO.ClinicOrderDTO
 
 @{
     ViewData["Title"] = "Edit";
@@ -126,7 +126,8 @@
                 <input type="button" value="Update" class="btn btn-primary" onclick="SendData()" />
             </table>
             <div class="form-group">
-                @*@Html.HiddenFor(model => model.json_OrderDetails)*@
+                @Html.HiddenFor(model => model.json_OrderDetails)
+                @Html.HiddenFor(model => model.customer,"nicole")
                 <input type="submit" value="Save" class="btn btn-primary" />
                 <input type="button" value="get rows and sent them to server" id="send-data" class="btn btn-primary" />
             </div>
@@ -399,7 +400,7 @@
 
 
     function handleFormSubmit(event) {
-        event.preventDefault();
+        //event.preventDefault();
 
         const data = new FormData(event.target);
 
@@ -430,8 +431,8 @@
 
         $("#json_OrderDetails").val(JSON.stringify(OrderDetails));
 
-       // return true;
-          $.ajax({
+        return true;
+          @*$.ajax({
                 type: "POST",
                 url: `@Url.Action("Edit","ClinicOrders")`,
                 data: formJSON,
@@ -443,7 +444,7 @@
                     alert(JSON.stringify(data));
                 }
 
-            });
+            });*@
     }
 
 

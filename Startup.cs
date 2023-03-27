@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using tutor1.Extension;
 using tutor1.Interfaces;
@@ -34,11 +35,13 @@ namespace tutor1
 
             #region DB
             services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("TodoList"));
-            services.AddDbContext<ClinicContext>(opt => opt.UseInMemoryDatabase("ClinicOrder"));
+            //services.AddDbContext<ClinicContext>(opt => opt.UseInMemoryDatabase("ClinicOrder"));
             services.AddDbContext<ClinicContext>(opt =>
             {
                 opt.UseInMemoryDatabase("ClinicOrder");
                 opt.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                opt.EnableSensitiveDataLogging();
+                opt.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
             });
             #endregion
             services.AddControllersWithViews();

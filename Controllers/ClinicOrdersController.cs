@@ -37,7 +37,8 @@ namespace tutor1.Controllers
             _configuration = configuration;
             _mapper = mapper;
         }
-
+        
+        
         // GET: ClinicOrders
         public async Task<IActionResult> Index()
         {
@@ -94,15 +95,20 @@ namespace tutor1.Controllers
                 return NotFound();
             }
 
-            var clinicOrder = await _context.ClinicOrders.Include(c=>c.OrderDetails).ThenInclude(d=>d.product).FirstOrDefaultAsync(m => m.ClinicOrderId == id);
-            if (clinicOrder == null)
+            var Order = await _context.ClinicOrders                
+                .Include(c=>c.OrderDetails)
+                .ThenInclude(d=>d.product)
+                .FirstOrDefaultAsync(m => m.ClinicOrderId == id);
+            if (Order == null)
             {
                 return NotFound();
             }
+
+            ClinicOrderDTO orderDTO = _mapper.Map<ClinicOrder, ClinicOrderDTO>(Order);
             ViewBag.Message = "Edit 1 -";
             ViewData["Message2"] = "Edit 1 -";
 
-            return View(clinicOrder);
+            return View(orderDTO);
         }
 
         //// POST: ClinicOrders/Edit/5
@@ -144,28 +150,39 @@ namespace tutor1.Controllers
         //}
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> Edit(int id, ClinicOrderDTO view_clinicOrder)
         {
             if (view_clinicOrder.ClinicOrderId == int.MinValue)
             {
                 return NotFound();
-            }
-            ClinicOrder clinicOrder = new ClinicOrder();
-            clinicOrder = _mapper.Map<ClinicOrderDTO, ClinicOrder>(view_clinicOrder);
-            clinicOrder.OrderDetails = JsonConvert.DeserializeObject<List<ClinicOrderDetail>>(view_clinicOrder.json_OrderDetails);
+            }                      
+
+            view_clinicOrder.OrderDetails = JsonConvert.DeserializeObject<List<ClinicOrderDetail>>(view_clinicOrder.json_OrderDetails);
             
             if (ModelState.IsValid)
             {
                 try
-                {                                      
-                    _context.Update(clinicOrder);
+                {
+                    //ClinicOrder clinicOrder = new ClinicOrder();
+                    //clinicOrder = _mapper.Map<ClinicOrderDTO, ClinicOrder>(view_clinicOrder);
+                    ClinicOrder org_clinicOrder = await _context.ClinicOrders
+                        .Include(c => c.OrderDetails)
+                        .ThenInclude(d => d.product)
+                        .FirstOrDefaultAsync(m => m.ClinicOrderId == id);
+                    foreach (ClinicOrderDetail d in org_clinicOrder.OrderDetails)
+                    {
+                         _context.ClinicOrderDetails.Remove(d);
+                    }                    
+                    org_clinicOrder.OrderDetails.AddRange(view_clinicOrder.OrderDetails);
+                    org_clinicOrder.Amount = view_clinicOrder.Amount;
+                    _context.Update(org_clinicOrder);
                     await _context.SaveChangesAsync();
                 }
                 //catch (DbUpdateConcurrencyException)
                 catch (Exception ex)
                 {
-                    if (!ClinicOrderExists(clinicOrder.ClinicOrderId))
+                    if (!ClinicOrderExists(view_clinicOrder.ClinicOrderId))
                     {
                         return NotFound();
                     }
@@ -188,8 +205,8 @@ namespace tutor1.Controllers
             ViewBag.Message = "Edit 2 -";
             ViewData["Message2"] = "Edit 2 -";
 
-            //return View(clinicOrder);
-            return Json(clinicOrder);
+            return View(view_clinicOrder);
+            //return Json(clinicOrder);
         }
 
         

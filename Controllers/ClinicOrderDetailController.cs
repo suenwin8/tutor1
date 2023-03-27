@@ -56,11 +56,12 @@ namespace tutor1.Controllers
                 try
                 {
                     await DeleteActionAsync(detail.First().ClinicOrderID,null);
-                    foreach (ClinicOrderDetail row in detail)
-                    {                        
-                        _context.ClinicOrderDetails.Add(row);
-                    }                
-                    await _context.SaveChangesAsync();
+                    await _context.ClinicOrderDetails.AddRangeAsync(detail);
+                    //foreach (ClinicOrderDetail row in detail)
+                    //{                        
+                    //    _context.ClinicOrderDetails.Add(row);
+                    //}                
+                    var result = await _context.SaveChangesAsync(); 
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
