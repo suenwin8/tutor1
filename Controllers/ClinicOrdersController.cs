@@ -177,6 +177,11 @@ namespace tutor1.Controllers
                     }                    
                     org_clinicOrder.OrderDetails.AddRange(view_clinicOrder.OrderDetails);
                     org_clinicOrder.Amount = view_clinicOrder.Amount;
+                    org_clinicOrder.customer = view_clinicOrder.customer;
+                    org_clinicOrder.DateOfClinicOrder = view_clinicOrder.DateOfClinicOrder;
+                    org_clinicOrder.LastUpdatedTime = DateTime.Now;
+                    org_clinicOrder.seeDoctor = view_clinicOrder.seeDoctor;
+                    
                     _context.Update(org_clinicOrder);
                     await _context.SaveChangesAsync();
                 }
