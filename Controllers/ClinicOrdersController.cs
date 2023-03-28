@@ -53,16 +53,19 @@ namespace tutor1.Controllers
                 return NotFound();
             }
 
-            var clinicOrder = await _context.ClinicOrders
+            var Order = await _context.ClinicOrders
                 .Include(c => c.OrderDetails)
                 .ThenInclude(d => d.product)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ClinicOrderId == id);
-            if (clinicOrder == null)
+            if (Order == null)
             {
                 return NotFound();
             }
 
-            return View(clinicOrder);
+            ClinicOrderDTO orderDTO = _mapper.Map<ClinicOrder, ClinicOrderDTO>(Order);
+
+            return View(orderDTO);
         }
 
         // GET: ClinicOrders/Create
@@ -89,8 +92,7 @@ namespace tutor1.Controllers
 
         // GET: ClinicOrders/Edit/5
         public async Task<IActionResult> Edit(int? id)
-        {
-            
+        {            
             if (id == null)
             {
                 return NotFound();
@@ -106,9 +108,7 @@ namespace tutor1.Controllers
                 return NotFound();
             }
 
-            ClinicOrderDTO orderDTO = _mapper.Map<ClinicOrder, ClinicOrderDTO>(Order);
-            ViewBag.Message = "Edit 1 -";
-            ViewData["Message2"] = "Edit 1 -";
+            ClinicOrderDTO orderDTO = _mapper.Map<ClinicOrder, ClinicOrderDTO>(Order);           
 
             return View(orderDTO);
         }
