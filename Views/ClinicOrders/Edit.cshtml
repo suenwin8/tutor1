@@ -2,23 +2,21 @@
 
 @{
     ViewData["Title"] = "Edit";
-    
+
 }
 
 <h1>Edit</h1>
 <h4>ClinicOrder</h4>
 <hr />
 
-
+@{
+    if (ViewBag.Message != null)
+    {
+        @Html.Raw(ViewBag.Message)
+    }
+}
 
 <div class="row">
-
-    @{
-        if (ViewBag.Message != null)
-        {
-            @Html.Raw(ViewBag.Message)
-        }       
-    }
     <div class="col-md-4">
         <form asp-action="Edit" class="contact-form">
             <div id="showDetails">
@@ -81,8 +79,8 @@
                                 <td>
 
                                     @*<input type='hidden'
-                            name="ClinicOrderID_'+@row+'"
-                            value='@item.ClinicOrderID' />*@
+                                        name="ClinicOrderID_'+@row+'"
+                                        value='@item.ClinicOrderID' />*@
                                     @Html.HiddenFor(modelItem => item.ClinicOrderID, new { id = "ClinicOrderID" })
                                     @Html.TextBoxFor(modelItem => item.ClinicOrderDetailID, new { id = "ClinicOrderDetailID" })
                                     @Html.HiddenFor(modelItem => item.ProductID, new { id = "ProductID" })
@@ -122,12 +120,12 @@
                         <td><label id="lb_TotalAmount" for="lb_TotalAmount"></label></td>
                         <td></td>
                     </tr>
-                </tfoot>                
+                </tfoot>
                 <input type="button" value="Update" class="btn btn-primary" onclick="SendData()" />
             </table>
             <div class="form-group">
                 @Html.HiddenFor(model => model.json_OrderDetails)
-                @Html.HiddenFor(model => model.customer,"nicole")
+                @Html.HiddenFor(model => model.customer, "nicole")
                 <input type="submit" value="Save" class="btn btn-primary" />
                 <input type="button" value="get rows and sent them to server" id="send-data" class="btn btn-primary" />
             </div>
@@ -145,7 +143,7 @@
 </div>
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script>
-    const form = document.querySelector('.contact-form');    
+    const form = document.querySelector('.contact-form');
     let details = [];
     let products = [];
     $(document).ready(function () {
@@ -437,8 +435,8 @@
                 url: `@Url.Action("Edit","ClinicOrders")`,
                 data: formJSON,
                 traditional: true,
-              success: function (data) {                  
-                  alert('success'); 
+              success: function (data) {
+                  alert('success');
                 },
                 error: function (data) {
                     alert(JSON.stringify(data));

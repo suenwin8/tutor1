@@ -54,7 +54,8 @@ namespace tutor1.Controllers
             }
 
             var clinicOrder = await _context.ClinicOrders
-                .Include(c => c.OrderDetails).ThenInclude(d => d.product)
+                .Include(c => c.OrderDetails)
+                .ThenInclude(d => d.product)
                 .FirstOrDefaultAsync(m => m.ClinicOrderId == id);
             if (clinicOrder == null)
             {
@@ -96,8 +97,9 @@ namespace tutor1.Controllers
             }
 
             var Order = await _context.ClinicOrders                
-                .Include(c=>c.OrderDetails)
+                .Include(c=>c.OrderDetails)                
                 .ThenInclude(d=>d.product)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ClinicOrderId == id);
             if (Order == null)
             {
@@ -167,8 +169,7 @@ namespace tutor1.Controllers
                     //ClinicOrder clinicOrder = new ClinicOrder();
                     //clinicOrder = _mapper.Map<ClinicOrderDTO, ClinicOrder>(view_clinicOrder);
                     ClinicOrder org_clinicOrder = await _context.ClinicOrders
-                        .Include(c => c.OrderDetails)
-                        .ThenInclude(d => d.product)
+                        .Include(c => c.OrderDetails)                                                
                         .FirstOrDefaultAsync(m => m.ClinicOrderId == id);
                     foreach (ClinicOrderDetail d in org_clinicOrder.OrderDetails)
                     {
@@ -195,15 +196,12 @@ namespace tutor1.Controllers
 
                 //view_clinicOrder = await _context.ClinicOrders.Include(c => c.OrderDetails).ThenInclude(d => d.product).FirstOrDefaultAsync(m => m.ClinicOrderId == clinicOrder.ClinicOrderId);
 
-                TempData["Message"] = DisplayMessage.ShowAlert(Alerts.Success, _configuration["HTMLDisplayWording:AlertMessage:Success"]);
+                ViewBag.Message = DisplayMessage.ShowAlert(Alerts.Success, _configuration["HTMLDisplayWording:AlertMessage:Success"]);
             }
             else
             {
                 throw new Exception("Fail to validate the form.");
-            }
-
-            ViewBag.Message = "Edit 2 -";
-            ViewData["Message2"] = "Edit 2 -";
+            }           
 
             return View(view_clinicOrder);
             //return Json(clinicOrder);
