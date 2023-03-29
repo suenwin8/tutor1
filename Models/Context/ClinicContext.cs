@@ -19,11 +19,14 @@ namespace tutor1.Models.Context
         {
             modelBuilder.Entity<ClinicOrderDetail>()
                 .HasKey(c => new { c.ClinicOrderID, c.ClinicOrderDetailID });
+
+            
         }
 
         public DbSet<ClinicOrder> ClinicOrders { get; set; } = null!;
 
         public DbSet<ClinicOrderDetail> ClinicOrderDetails { get; set; } = null!;
         public DbSet<Product> products { get; set; } = null!;
+        public DbSet<AppSetting> appSettings { get; set; } = null!;
     }
 }

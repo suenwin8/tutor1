@@ -1,4 +1,4 @@
-﻿@model tutor1.Models.Entity.ClinicOrder
+﻿@model tutor1.Models.DTO.ClinicOrderDTO
 
 @{
     ViewData["Title"] = "Create";
@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" class="contact-form">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="clinicOrder_seqid" class="control-label"></label>
@@ -32,14 +32,91 @@
                 <input asp-for="Amount" class="form-control" />
                 <span asp-validation-for="Amount" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="LastUpdatedTime" class="control-label"></label>
-                <input asp-for="LastUpdatedTime" class="form-control" />
-                <span asp-validation-for="LastUpdatedTime" class="text-danger"></span>
-            </div>
+            <table class="table" id="details">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().ClinicOrderDetailID)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().Quantity)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().product.Name)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().product.Price)
+                        </th>
+                        <th>
+
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ var row = 0;
+                        if (Model.OrderDetails != null)
+                        {
+                            @foreach (var item in Model.OrderDetails)
+                            {
+                                <tr>
+                                    <td>
+
+                                        @*<input type='hidden'
+                            name="ClinicOrderID_'+@row+'"
+                            value='@item.ClinicOrderID' />*@
+                                        @Html.HiddenFor(modelItem => item.ClinicOrderID, new { id = "ClinicOrderID" })
+                                        @Html.TextBoxFor(modelItem => item.ClinicOrderDetailID, new { id = "ClinicOrderDetailID" })
+                                        @Html.HiddenFor(modelItem => item.ProductID, new { id = "ProductID" })
+                                    </td>
+                                    <td>
+                                        @Html.TextBoxFor(modelItem => item.Quantity, new { id = "Quantity" })
+                                    </td>
+                                    <td>
+                                        @Html.TextBoxFor(modelItem => item.product.Name, new { id = "Name" })
+                                    </td>
+                                    <td>
+                                        @Html.TextBoxFor(modelItem => item.Price, new { id = "Price" })
+                                    </td>
+                                    <td>
+                                        <a onclick="DeleteRowAction()" id="DeleteButton" name="DeleteButton">Delete</a>
+                                    </td>
+                                </tr>
+                                row++;
+                            }
+                        }
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>
+                            <select class="form-control" id="ddl_productID" name="ddl_productID">
+                            </select>
+                        </td>
+                        <td><input type="button" id="btnAdd" value="Add" onclick="AddProduct()" /></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><label id="lb_TotalAmount" for="lb_TotalAmount"></label></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+                <input type="button" value="Update" class="btn btn-primary" onclick="SendData()" />
+            </table>
 
             <div class="form-group">
+                @Html.HiddenFor(model => model.json_OrderDetails)
+                @Html.HiddenFor(model => model.customer, "nicole")
                 <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+            <div class="results">
+                <h2>Form Data</h2>
+                <pre></pre>
             </div>
         </form>
     </div>
@@ -49,3 +126,194 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    const form = document.querySelector('.contact-form');
+    let details = [];
+    let products = [];
+    $(document).ready(function () {
+        form.addEventListener('submit', handleFormSubmit);
+        GetProductList();
+        CalTotalAmount();
+        $('input[name="item.Price"]').on("change", function () {
+            CalTotalAmount();
+        });
+        $('input[name="item.Quantity"]').on("change", function () {
+            CalTotalAmount();
+        });
+    });
+    function GetProductList() {
+        $.ajax({
+            type: "GET",
+            url: `${_apiuri_product}`,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            traditional: true,
+            success: function (data) {
+                products.push(data);
+                console.log(products);
+                $.each(data, function (index, item) {
+                    $("#ddl_productID").append("<option value=" + item.productID + ">" + item.name + "</option>");
+                });
+            },
+            error: function (data) {
+                console.log(data)
+            }
+        });
+    }
+    function AddProduct() {
+        var result = products[0].filter(obj => {
+            return obj.productID === parseInt($('#ddl_productID').val());
+        });
+        console.log(result);
+        console.log(result[0].name);
+        var arr_ClinicOrderDetailID = $('#details >tbody >tr').length;
+        var new_ClinicOrderDetailID = $('#details >tbody >tr').length+1;
+        var new_trtd = `<tr>
+                            <td>
+                            <input type="hidden" id="ClinicOrderID" name="item.ClinicOrderID" value="` + @Model.ClinicOrderId + `" />
+                            <input id = "ClinicOrderDetailID" name = "item.ClinicOrderDetailID" value = "` + new_ClinicOrderDetailID +`" />
+                            <input type = "hidden" id ="ProductID" name = "item.ProductID" value = "` + result[0].productID +`" />
+                            </td>
+                            <td>
+                            <input id = "Quantity" name = "item.Quantity" value = "1" />
+                            </td>
+                            <td>
+                                <input id = "Name" name = "item.product.Name" value = "` + result[0].name+`" />
+                            </td>
+                            <td>
+                                <input id = "Price" name = "item.Price" value = "` + result[0].price +`" />
+                            </td>
+                            <td>
+                                <a onclick="DeleteRowAction()" id="DeleteButton" name="DeleteButton">Delete</a>
+                            </td>
+                        </tr>`;
+        $("#details > tbody").append(new_trtd);
+        ResortOrderDetailID();
+        CalTotalAmount();
+    }
+
+    //https://www.c-sharpcorner.com/article/get-set-the-value-from-html-table-in-asp-net-mvc-jquery/
+    function SendData() {
+        //document.getElementById('info').innerHTML = "";
+        //var myTab = document.getElementById('details');
+        var myTab = $('#details >tbody >tr');
+        var Details = [];
+        // LOOP THROUGH EACH ROW OF THE TABLE AFTER HEADER.
+        var qtd = 0;
+        $("#details > tbody > tr").each(function () {
+            var tr = $(this);
+            var data = {
+                ClinicOrderID: tr.find('td:eq(0) input[name="item.ClinicOrderID"]').val(),
+                ClinicOrderDetailID: tr.find('td:eq(0) input[name="item.ClinicOrderDetailID"]').val(),
+                ProductID: tr.find('td:eq(0) input[name="item.ProductID"]').val(),
+                Quantity: tr.find('td:eq(1) input[name="item.Quantity"]').val(),
+                Price: tr.find('td:eq(3) input[name="item.Price"]').val()
+            };
+            //console.log("loop through each row");
+            //console.log(data);
+            Details.push(data);
+        });
+
+        console.log(JSON.stringify(Details));
+
+        $.ajax({
+            type: "POST",
+            url: `${_apiuri_orderdetail}`,
+            data: JSON.stringify(Details),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            traditional: true,
+            success: function (data) {
+                console.log(data)
+                //for (let i = 0; i < data.length; i++) {
+                //    $('#articleIndex').append(`
+                //            <h3 class="display-4">
+                //                <a href=/Article/${data[i].id}>${data[i].title}</a>
+                //            </h3>
+                //        `);
+                //}
+            },
+            error: function (data) {
+                console.log(data)
+            }
+
+        });
+
+    }
+    //https://www.geeksforgeeks.org/how-to-dynamically-add-remove-table-rows-using-jquery/?ref=rp
+    function DeleteRowAction() {
+        $("#details > tbody > tr").on('click', '#DeleteButton', function () {
+            $(this).closest("tr").remove();
+            ResortOrderDetailID();
+            CalTotalAmount();
+        });
+    }
+    function DeleteRow() {
+        $("#details").on("click", "#DeleteButton", function () {
+            $(this).closest("tr").remove();
+        });
+        console.log("1 - deleteRow()");
+    }
+    function ResortOrderDetailID() {
+        var rowID = 1;
+        //RESORT the orderdetailID
+        $("#details > tbody > tr").each(function () {
+            var tr = $(this);
+            tr.find('td:eq(0) input[name="item.ClinicOrderDetailID"]').val(rowID);
+            rowID++;
+        });
+        console.log("2 - ResortOrderDetailID()");
+    }
+    function CalTotalAmount() {
+        console.log("3 - CalTotalAmount()");
+        // LOOP THROUGH EACH ROW OF THE TABLE AFTER HEADER.
+        var total = 0;
+        var rowID = 0;
+        $("#details > tbody > tr").each(function () {
+            var tr = $(this);
+            total += parseFloat(tr.find('td:eq(3) input[name="item.Price"]').val());
+            rowID++;
+        });
+        $("#lb_TotalAmount").text(total);
+        $("#Amount").val(total);
+    }
+
+
+    function handleFormSubmit(event) {
+        //event.preventDefault();
+
+        const data = new FormData(event.target);
+
+        const formJSON = Object.fromEntries(data.entries());
+
+        // for multi-selects, we need special handling
+        var OrderDetails = [];
+        // LOOP THROUGH EACH ROW OF THE TABLE AFTER HEADER.
+
+        $("#details > tbody > tr").each(function () {
+            var tr = $(this);
+            var data = {
+                ClinicOrderID: tr.find('td:eq(0) input[name="item.ClinicOrderID"]').val(),
+                ClinicOrderDetailID: tr.find('td:eq(0) input[name="item.ClinicOrderDetailID"]').val(),
+                ProductID: tr.find('td:eq(0) input[name="item.ProductID"]').val(),
+                Quantity: tr.find('td:eq(1) input[name="item.Quantity"]').val(),
+                Price: tr.find('td:eq(3) input[name="item.Price"]').val()
+            };
+            console.log("loop through each row");
+            console.log(data);
+            OrderDetails.push(data);
+        });
+        //formJSON.OrderDetails = JSON.stringify(OrderDetails, null, 2);
+        formJSON.json_OrderDetails = JSON.stringify(OrderDetails);
+
+        const results = document.querySelector('.results pre');
+        results.innerText = JSON.stringify(formJSON, null, 2);
+
+        $("#json_OrderDetails").val(JSON.stringify(OrderDetails));
+
+        return true;          
+    }
+
+
+</script>

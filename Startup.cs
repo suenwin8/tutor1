@@ -57,6 +57,7 @@ namespace tutor1
 
             services.AddScoped<IWeather, WeatherService>();
             services.AddScoped<DbContext, ClinicContext>();
+            services.AddScoped<IClinicOrderService, ClinicOrderDetailService>();
             
         }
 
