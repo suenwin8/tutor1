@@ -33,28 +33,8 @@ namespace tutor1.Controllers
 
         public IActionResult Index()
         {
-            var pokemons = new List<Pokemon>()
-            {
-                new Pokemon()
-                {
-                    Id = 1,
-                    Name = "水箭龜",
-                    Property = "水系"
-                },
-                new Pokemon()
-                {
-                    Id = 2,
-                    Name = "噴火龍",
-                    Property = "火系"
-                },
-                new Pokemon()
-                {
-                    Id = 3,
-                    Name = "妙蛙花",
-                    Property = "草系"
-                }
-            };
-            return View(pokemons);
+            
+            return View();
         }
 
         public IActionResult Privacy()

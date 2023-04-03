@@ -8,7 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using tutor1.Extension;
-using tutor1.Interfaces;
+
 using tutor1.Models.Context;
 using tutor1.Services;
 
@@ -35,7 +35,6 @@ namespace tutor1
 
             #region DB
             services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("TodoList"));
-            //services.AddDbContext<ClinicContext>(opt => opt.UseInMemoryDatabase("ClinicOrder"));
             services.AddDbContext<ClinicContext>(opt =>
             {
                 opt.UseInMemoryDatabase("ClinicOrder");
@@ -43,6 +42,8 @@ namespace tutor1
                 opt.EnableSensitiveDataLogging();
                 opt.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
             });
+            //services.AddDbContext<ClinicContext>(opts =>
+            //    opts.UseSqlServer(Configuration.GetConnectionString("sqlConnection")));
             #endregion
             services.AddControllersWithViews();
             services.AddHttpContextAccessor();
@@ -55,7 +56,6 @@ namespace tutor1
             services.AddSingleton(mapper);
             #endregion
 
-            services.AddScoped<IWeather, WeatherService>();
             services.AddScoped<DbContext, ClinicContext>();
             services.AddScoped<IClinicOrderService, ClinicOrderDetailService>();
             

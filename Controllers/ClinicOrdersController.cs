@@ -94,7 +94,7 @@ namespace tutor1.Controllers
             if (ModelState.IsValid)
             {
                 ClinicOrder clinicOrder = _mapper.Map<ClinicOrderDTO,ClinicOrder>(view_clinicOrder);
-
+                clinicOrder.LastUpdatedTime = DateTime.Now;
                 _context.Add(clinicOrder);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

@@ -17,6 +17,7 @@ namespace tutor1.Models.Entity
         //[DataType(DataType.Date)]
         //public DateTime DateOfInjection { get; set; }
         //public MedicalType typeOfMedical { get; set; }
+
         public decimal Price { get; set; }
     }
 }

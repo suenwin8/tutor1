@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using tutor1.Models.Enum;
 
 namespace tutor1.Models.Entity
 {
@@ -23,6 +24,10 @@ namespace tutor1.Models.Entity
         public Product product { get; set; }
         public int ClinicOrderID { get; set; }
         public ClinicOrder Order { get; set; }
-        
+
+        [DataType(DataType.Date)]
+        public DateTime DateOfInjection { get; set; }
+        public MedicalType typeOfMedical { get; set; }
+
     }
 }
