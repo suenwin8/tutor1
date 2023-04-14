@@ -14,8 +14,8 @@ namespace tutor1.Models.Entity
         [DataType(DataType.Date)]
         public DateTime DateOfClinicOrder { get; set; }
         public bool seeDoctor { get; set; }
-        [RegularExpression(@"^[A-Z]+[a-zA-Z\s]*$"), Required, StringLength(30)]
-        public string customer { get; set; }
+        [RegularExpression(@"^[A-Z]+[a-zA-Z\s]*$"), StringLength(30)]
+        public string? customer {get;set;}
         [DataType(DataType.Currency)]
         [Column(TypeName = "decimal(18, 2)")]
         public decimal Amount { get; set; }

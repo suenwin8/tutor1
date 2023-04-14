@@ -35,15 +35,15 @@ namespace tutor1
 
             #region DB
             services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("TodoList"));
-            services.AddDbContext<ClinicContext>(opt =>
-            {
-                opt.UseInMemoryDatabase("ClinicOrder");
-                opt.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                opt.EnableSensitiveDataLogging();
-                opt.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
-            });
-            //services.AddDbContext<ClinicContext>(opts =>
-            //    opts.UseSqlServer(Configuration.GetConnectionString("sqlConnection")));
+            //services.AddDbContext<ClinicContext>(opt =>
+            //{
+            //    opt.UseInMemoryDatabase("ClinicOrder");
+            //    opt.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+            //    opt.EnableSensitiveDataLogging();
+            //    opt.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
+            //});
+            services.AddDbContext<ClinicContext>(opts =>
+                opts.UseSqlServer(Configuration.GetConnectionString("sqlConnection")));
             #endregion
             services.AddControllersWithViews();
             services.AddHttpContextAccessor();

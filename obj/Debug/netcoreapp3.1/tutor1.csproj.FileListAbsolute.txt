@@ -213,3 +213,4 @@ C:\Users\RTHK USER\source\repos\tutor1\obj\Debug\netcoreapp3.1\tutor1.genruntime
 C:\Users\RTHK USER\source\repos\tutor1\bin\Debug\netcoreapp3.1\Properties\launchSettings.json
 C:\Users\RTHK USER\source\repos\tutor1\bin\Debug\netcoreapp3.1\Properties\serviceDependencies.json
 C:\Users\RTHK USER\source\repos\tutor1\bin\Debug\netcoreapp3.1\Properties\serviceDependencies.local.json
+C:\Users\RTHK USER\source\repos\tutor1\obj\Debug\netcoreapp3.1\tutor1.csprojAssemblyReference.cache

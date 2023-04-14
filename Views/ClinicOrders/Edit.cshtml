@@ -150,7 +150,17 @@
         form.addEventListener('submit', handleFormSubmit);
         GetProductList();
         CalTotalAmount();
-        $('input[name="item.Price"]').on("change", function () {
+        $('#details').on('change', '#Quantity', function () {
+            var tr = $(this).closest("tr");
+            quantity = tr.find('td:eq(1) input[name="item.Quantity"]').val();
+            productID = tr.find('td:eq(0) input[name="item.ProductID"]').val();
+            console.log(productID);
+            var result = products[0].filter(obj => {
+                return obj.productID === parseInt(productID);
+            });
+            price = result[0].price;
+            console.log(price * quantity);
+            tr.find('td:eq(3) input[name="item.Price"]').val(price * quantity);
             CalTotalAmount();
         });
 

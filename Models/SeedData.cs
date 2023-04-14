@@ -22,12 +22,12 @@ namespace tutor1.Models
                 {
                     return;   // DB has been seeded
                 }
-                var setting = new List<AppSetting>()
-                {
-                    new AppSetting() { ClinicOrderId=1,seqid=1, AppSettingID=1}
-                };
-                setting.ForEach(p => context.appSettings.Add(p));
-                context.SaveChanges();
+                //var setting = new List<AppSetting>()
+                //{
+                //    new AppSetting() { ClinicOrderId=1,seqid=1, AppSettingID=1}
+                //};
+                //setting.ForEach(p => context.appSettings.Add(p));
+                //context.SaveChanges();
 
                 var products = new List<Product>()
                 {

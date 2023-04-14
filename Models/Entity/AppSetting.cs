@@ -9,9 +9,15 @@ namespace tutor1.Models.Entity
     
     public class AppSetting
     {
+        //
+        //public int AppSettingID { get; set; }
+        //public int ClinicOrderId { get; set; }
+        //public int seqid { get; set; }
         [Key]
-        public int AppSettingID { get; set; }
-        public int ClinicOrderId { get; set; }
-        public int seqid { get; set; }
+        public int ID { get; set; }
+        public string VARNAME { get; set; }
+        public int INTVALUE { get; set; }
+        public string TXTVALUE { get; set; }
+        public string VARGROUP { get; set; }
     }
 }

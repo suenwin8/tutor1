@@ -22,7 +22,7 @@ namespace tutor1.Models.Context
 
             
         }
-
+        //20230413 variable name should same with database table name
         public DbSet<ClinicOrder> ClinicOrders { get; set; } = null!;
 
         public DbSet<ClinicOrderDetail> ClinicOrderDetails { get; set; } = null!;

@@ -25,9 +25,9 @@ namespace tutor1.Models.Entity
         public int ClinicOrderID { get; set; }
         public ClinicOrder Order { get; set; }
 
-        [DataType(DataType.Date)]
-        public DateTime DateOfInjection { get; set; }
-        public MedicalType typeOfMedical { get; set; }
+        //[DataType(DataType.Date)]
+        //public DateTime DateOfInjection { get; set; }
+        //public MedicalType typeOfMedical { get; set; }
 
     }
 }

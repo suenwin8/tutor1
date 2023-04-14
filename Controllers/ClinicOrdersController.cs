@@ -74,10 +74,15 @@ namespace tutor1.Controllers
         // GET: ClinicOrders/Create
         public async Task<IActionResult> Create()
         {
-            var appSetting = await _clinicOrderService.GetNewAppSetting();
+            var appSetting = await _clinicOrderService.GetNewAppSetting("ORDER");
             ClinicOrderDTO orderDTO = new ClinicOrderDTO();
-            orderDTO.ClinicOrderId = appSetting.ClinicOrderId;
-            orderDTO.clinicOrder_seqid = _clinicOrderService.GetNewOrderSeqID(appSetting);
+            //orderDTO.ClinicOrderId = appSetting.ClinicOrderId;
+            //orderDTO.clinicOrder_seqid = _clinicOrderService.GetNewOrderSeqID(appSetting);
+            var _ClinicOrderId = from row in appSetting where row.VARNAME == "ClinicOrderId" select row.INTVALUE;
+            var _seqid = from row in appSetting where row.VARNAME == "seqid" select row.INTVALUE;
+            orderDTO.ClinicOrderId = int.Parse(_ClinicOrderId.First().ToString());
+            orderDTO.clinicOrder_seqid = _clinicOrderService.GetNewOrderSeqID(int.Parse(_seqid.First().ToString()));
+            
             orderDTO.DateOfClinicOrder = DateTime.Now;
             
             return View(orderDTO);

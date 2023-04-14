@@ -12,8 +12,8 @@ namespace tutor1.Services
 {
     public interface IClinicOrderService
     {
-        public Task<AppSetting> GetNewAppSetting(CancellationToken cancellationToken = default);
-        public string GetNewOrderSeqID(AppSetting appSetting, CancellationToken cancellationToken = default);
+        public Task<List<AppSetting>> GetNewAppSetting(string variable_name,CancellationToken cancellationToken = default);
+        public string GetNewOrderSeqID(int seqid, CancellationToken cancellationToken = default);
         //Task<T> GetAllAsync<T>(CancellationToken cancellationToken = default) where T : class, new();
 
         //Task<T> GetByIDAsync<T>(int id, CancellationToken cancellationToken = default) where T : class, new();
@@ -31,21 +31,21 @@ namespace tutor1.Services
             _context = Context;            
         }
 
-        public async Task<AppSetting> GetNewAppSetting(CancellationToken cancellationToken = default)
+        public async Task<List<AppSetting>> GetNewAppSetting(string variable_name, CancellationToken cancellationToken = default)
         {
-            var appSetting = _context.appSettings.Where(a => a.AppSettingID == 1).FirstOrDefault();
-
-            appSetting.ClinicOrderId += 1;
-            appSetting.seqid += 1;
-
-            _context.Update(appSetting);
+            var appSetting = _context.appSettings.Where(a => a.VARGROUP == variable_name).ToList();
+            foreach (AppSetting row in appSetting)
+            {
+                row.INTVALUE += 1;
+                _context.Update(row);
+            }           
             await _context.SaveChangesAsync();
 
             return appSetting;
         }
-        public string GetNewOrderSeqID(AppSetting appSetting, CancellationToken cancellationToken = default)
+        public string GetNewOrderSeqID(int seqid, CancellationToken cancellationToken = default)
         {
-            return DateTime.Now.ToString("yyyyMMdd") + appSetting.seqid.ToString().PadLeft(5,'0');
+            return DateTime.Now.ToString("yyyyMMdd") + seqid.ToString().PadLeft(5,'0');
         }
 
 
