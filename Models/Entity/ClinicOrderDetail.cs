@@ -15,8 +15,9 @@ namespace tutor1.Models.Entity
         public int ClinicOrderDetailID { get; set; }
         [Column(TypeName = "decimal(18, 2)")]
         public int Quantity { get; set; }
-        [DataType(DataType.Currency)]
+        [Column(TypeName = "decimal(18, 2)")]
         [Required]
+
         public decimal Price { get; set; }
 
         // Navigation properties

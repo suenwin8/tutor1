@@ -19,8 +19,8 @@ namespace tutor1.Models.Context
         {
             modelBuilder.Entity<ClinicOrderDetail>()
                 .HasKey(c => new { c.ClinicOrderID, c.ClinicOrderDetailID });
-
             
+
         }
         //20230413 variable name should same with database table name
         public DbSet<ClinicOrder> ClinicOrders { get; set; } = null!;
@@ -28,5 +28,9 @@ namespace tutor1.Models.Context
         public DbSet<ClinicOrderDetail> ClinicOrderDetails { get; set; } = null!;
         public DbSet<Product> products { get; set; } = null!;
         public DbSet<AppSetting> appSettings { get; set; } = null!;
+
+        public DbSet<FileOnFileSystemModel> FileOnFileSystemModels { get; set; }
+
+        //public DbSet<tutor1.Models.Entity.FileModel> FileModel { get; set; }
     }
 }

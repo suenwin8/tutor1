@@ -58,6 +58,7 @@ namespace tutor1
 
             services.AddScoped<DbContext, ClinicContext>();
             services.AddScoped<IClinicOrderService, ClinicOrderDetailService>();
+            services.AddScoped<IFileUploadService, FileUploadService>();
             
         }
 
