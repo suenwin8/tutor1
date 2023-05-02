@@ -7,19 +7,27 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using tutor1.Models.Context;
 using tutor1.Models.DTO;
 using tutor1.Models.Entity;
+using tutor1.Services;
 
 namespace tutor1.Controllers
 {
     public class FileUploadController : Controller
     {
         private readonly ClinicContext _context;
-
-        public FileUploadController(ClinicContext context)
+        private readonly IFileUploadService _fileUploadService;
+        private readonly IConfiguration _configuration;
+        private readonly long _fileSizeLimit;
+        private readonly string[] _permittedExtensions = { ".txt" };
+        public FileUploadController(ClinicContext context, IFileUploadService fileUploadService, IConfiguration configuration)
         {
             _context = context;
+            _fileUploadService = fileUploadService;
+            _configuration = configuration;
+            _fileSizeLimit = _configuration.GetValue<long>("FileSizeLimit");
         }
 
         // GET: FileUpload
@@ -40,40 +48,30 @@ namespace tutor1.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadToFileSystem(List<IFormFile> files, string description)
         {
-            foreach (var file in files)
-            {
-                var basePath = Path.Combine(Directory.GetCurrentDirectory() + "\\Files\\");
-                bool basePathExists = System.IO.Directory.Exists(basePath);
-                if (!basePathExists) Directory.CreateDirectory(basePath);
-                var fileName = Path.GetFileNameWithoutExtension(file.FileName);
-                var filePath = Path.Combine(basePath, file.FileName);
-                var extension = Path.GetExtension(file.FileName);
-                if (!System.IO.File.Exists(filePath))
-                {
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await file.CopyToAsync(stream);
-                    }
-                    var fileModel = new FileOnFileSystemModel
-                    {
-                        CreatedOn = DateTime.UtcNow,
-                        FileType = file.ContentType,
-                        Extension = extension,
-                        Name = fileName,
-                        Description = description,
-                        FilePath = filePath
-                    };
-                    _context.FileOnFileSystemModels.Add(fileModel);
-                    _context.SaveChanges();
-                }
+            var viewModel = new FileUploadViewModel();
+            string ErrorMsg = "";
+            try {
+                viewModel = await _fileUploadService.UploadToFileSystem(files, description,_permittedExtensions, _fileSizeLimit);
             }
-            TempData["Message"] = "File successfully uploaded to File System.";
+            catch (Exception ex)
+            {
+                ErrorMsg = ex.Message;
+            }
+            
+            if (viewModel !=null && ErrorMsg=="")
+            {
+                TempData["Message"] = "File successfully uploaded to File System.";
+            }
+            else
+            {
+                TempData["Message"] = ErrorMsg;
+            }
             return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> DownloadFileFromFileSystem(int id)
         {
-            var file = await _context.FileOnFileSystemModels.Where(x => x.Id == id).FirstOrDefaultAsync();
+            var file = await _fileUploadService.GetByID(id);
             if (file == null) return null;
             var memory = new MemoryStream();
             using (var stream = new FileStream(file.FilePath, FileMode.Open))
@@ -86,7 +84,7 @@ namespace tutor1.Controllers
 
         public async Task<IActionResult> DeleteFileFromFileSystem(int id)
         {
-            var file = await _context.FileOnFileSystemModels.Where(x => x.Id == id).FirstOrDefaultAsync();
+            var file = await _fileUploadService.GetByID(id);
             if (file == null) return null;
             if (System.IO.File.Exists(file.FilePath))
             {

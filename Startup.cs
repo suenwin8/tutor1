@@ -46,6 +46,11 @@ namespace tutor1
                 opts.UseSqlServer(Configuration.GetConnectionString("sqlConnection")));
             #endregion
             services.AddControllersWithViews();
+
+            #region swagger            
+            services.AddSwaggerGen();
+            #endregion
+
             services.AddHttpContextAccessor();
             // configure DI for application services
             #region AutoMapper
@@ -82,6 +87,22 @@ namespace tutor1
             //nicole 20230308
             app.UseDefaultFiles();
             app.UseStaticFiles();
+
+            #region swagger
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger(c =>
+            {
+                c.SerializeAsV2 = true;
+            });
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
+
+            #endregion
 
             app.UseRouting();
 

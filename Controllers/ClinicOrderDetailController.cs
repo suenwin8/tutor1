@@ -110,7 +110,7 @@ namespace tutor1.Controllers
 
 
         #region DeleteActionAsync
-        public async Task<ActionResult<ClinicOrderDetail>> DeleteActionAsync(int orderID, int? detailID)
+        private async Task<ActionResult<ClinicOrderDetail>> DeleteActionAsync(int orderID, int? detailID)
         {
             int _detailID = detailID.HasValue ? detailID.Value : 0;
             if (orderID != 0 && _detailID != 0)
@@ -120,7 +120,7 @@ namespace tutor1.Controllers
             return Ok();
         }
 
-        public async Task<ActionResult<ClinicOrderDetail>> DeleteByOrderIDAsync(int orderID)
+        private async Task<ActionResult<ClinicOrderDetail>> DeleteByOrderIDAsync(int orderID)
         {
             var detail = await _context.ClinicOrderDetails.Where(i => i.ClinicOrderID == orderID).ToListAsync();
             if (detail == null)
@@ -133,7 +133,7 @@ namespace tutor1.Controllers
             }
             return Ok();
         }
-        public async Task<ActionResult<ClinicOrderDetail>> DeleteByOrderDetailIDAsync(int orderID, int detailID)
+        private async Task<ActionResult<ClinicOrderDetail>> DeleteByOrderDetailIDAsync(int orderID, int detailID)
         {
             var detail = await _context.ClinicOrderDetails.FirstOrDefaultAsync(i => i.ClinicOrderDetailID == detailID && i.ClinicOrderID == orderID);
             if (detail == null)
